@@ -1,0 +1,4 @@
+ants: a one-dimension cellular automaton
+
+This thing prints a whole lot of text to your terminal really fast. Try changing
+the value of r13 (0-255) for some pretty patterns.
