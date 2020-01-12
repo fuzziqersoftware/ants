@@ -1,4 +1,6 @@
 ants: a one-dimension cellular automaton
 
-This thing prints a whole lot of text to your terminal really fast. Try changing
-the value of r13 (0-255) for some pretty patterns.
+This thing prints a whole lot of text to your terminal really fast. Use head or
+tail as needed. You can give it some arguments to change its behavior:
+  ./ants RULE-NUMBER FIELD-WIDTH
+Valid rule numbers are 0 through 255.
