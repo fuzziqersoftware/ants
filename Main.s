@@ -21,27 +21,57 @@ _parse_int__done:
 
 .globl _main
 _main:
+  push r12
   push r13
   push r14
+  push r15
   push rbp
   mov rbp, rsp
+
+  # r15 is the number of lines to print (by default, no limit)
+  xor r15, r15
+  dec r15
 
   # r13 is the rule, r14 is the array length
   mov r13, 110
   mov r14, 159
 
-  # check if a rule and size are given
-  cmp rdi, 2
-  jl _main__done_cli_args
-  mov rax, [rsi + 8]
-  call _parse_int
-  mov r13, rdx
+  # check for command-line args
+_main__parse_command_line_arg_again:
+  dec rdi
+  add rsi, 8
+  test rdi, rdi
+  jz _main__done_cli_args
 
-  cmp rdi, 3
-  jl _main__done_cli_args
-  mov rax, [rsi + 16]
+  mov rcx, [rsi]
+  cmp byte ptr [rcx], 0x2D
+  jne _main__parse_command_line_arg_again
+
+  # -sSIZE
+  cmp byte ptr [rcx + 1], 0x73
+  jne _main__parse_command_line_arg__not_size
+  lea rax, [rcx + 2]
   call _parse_int
   mov r14, rdx
+  jmp _main__parse_command_line_arg_again
+_main__parse_command_line_arg__not_size:
+
+  # -rRULE
+  cmp byte ptr [rcx + 1], 0x72
+  jne _main__parse_command_line_arg__not_rule
+  lea rax, [rcx + 2]
+  call _parse_int
+  mov r13, rdx
+  jmp _main__parse_command_line_arg_again
+_main__parse_command_line_arg__not_rule:
+
+  # -cCOUNT
+  cmp byte ptr [rcx + 1], 0x63
+  jne _main__parse_command_line_arg_again
+  lea rax, [rcx + 2]
+  call _parse_int
+  mov r15, rdx
+  jmp _main__parse_command_line_arg_again
 
 _main__done_cli_args:
   # reserve stack space for the array and a null terminator at the end
@@ -100,7 +130,9 @@ _main__update_array__update_cell:
   mov rdi, rsp
   call _puts
 
-  jmp _main__update_array
+  # stop if we've printed the requested number of lines
+  dec r15
+  jnz _main__update_array
 
   # free the string stack space
   lea rdx, [r14 + 16]
@@ -110,6 +142,8 @@ _main__update_array__update_cell:
   # return 0
   xor rax, rax
   pop rbp
+  pop r15
   pop r14
   pop r13
+  pop r12
   ret

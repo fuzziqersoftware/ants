@@ -1,6 +1,6 @@
-ants: a one-dimension cellular automaton
+ants: a one-dimensional cellular automaton
 
-This thing prints a whole lot of text to your terminal really fast. Use head or
-tail as needed. You can give it some arguments to change its behavior:
-  ./ants RULE-NUMBER FIELD-WIDTH
-Valid rule numbers are 0 through 255.
+This thing prints a whole lot of text to your terminal really fast. Use -c to
+rein it in. Here's what you do:
+  ./ants -rRULE -cCOUNT -sWIDTH
+All arguments are optional. Valid rule numbers are 0 through 255.
